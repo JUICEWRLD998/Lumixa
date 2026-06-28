@@ -25,6 +25,9 @@ logs/
 .vscode/
 .idea/
 
+# internal planning doc (keep private)
+implementation.md
+
 # sqlite ledger (Phase 3)
 *.sqlite
 *.sqlite-journal
