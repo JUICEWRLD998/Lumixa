@@ -19,7 +19,11 @@ const SAMPLE: OddsPayload = {
   MarketPeriod: 'FullTime',
   PriceNames: ['Home', 'Draw', 'Away'],
   Prices: [190, 340, 410],
-  Pct: ['52.632', '29.412', '24.390'],
+  // DEMARGINED implied probabilities — the raw 1/odds figures (52.632 / 29.412 /
+  // 24.390) carry the book's overround and sum to ~106.4; dividing out that
+  // overround yields these fair probabilities, which sum to ≈100 as the feed's
+  // `Pct` contract guarantees.
+  Pct: ['49.451', '27.634', '22.915'],
 };
 
 describe('normalizeOddsPayload', () => {
@@ -40,7 +44,7 @@ describe('normalizeOddsPayload', () => {
 
   it('parses demargined Pct strings to numbers', () => {
     const tick = normalizeOddsPayload(SAMPLE);
-    expect(tick.pct).toEqual([52.632, 29.412, 24.39]);
+    expect(tick.pct).toEqual([49.451, 27.634, 22.915]);
   });
 
   it('demargined Pct sums to ≈ 100 (no overround)', () => {

@@ -20,7 +20,12 @@ export interface RecordEnvelope<T = unknown> {
   payload: T;
 }
 
-export const RecordEnvelopeSchema: z.ZodType<RecordEnvelope> = z.object({
+// NOTE: zod infers `z.unknown()` as an OPTIONAL property, so the inferred
+// schema type is not assignable to `RecordEnvelope` (whose `payload` is
+// required). We therefore omit the explicit `z.ZodType<RecordEnvelope>`
+// annotation and assert the parsed result back to `RecordEnvelope` in
+// `decodeRecord` — the runtime shape is identical.
+export const RecordEnvelopeSchema = z.object({
   kind: z.enum(['odds', 'score', 'meta']),
   ts: z.number(),
   fixtureId: z.number().optional(),
@@ -45,5 +50,5 @@ export function encodeRecord<T>(env: RecordEnvelope<T>): string {
 
 /** Parse and validate a single JSONL line into an envelope. */
 export function decodeRecord(line: string): RecordEnvelope {
-  return RecordEnvelopeSchema.parse(JSON.parse(line));
+  return RecordEnvelopeSchema.parse(JSON.parse(line)) as RecordEnvelope;
 }
