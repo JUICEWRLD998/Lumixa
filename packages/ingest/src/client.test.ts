@@ -39,7 +39,7 @@ function fakeFetch(response: Response): {
   calls: Array<{ url: string; init: RequestInit | undefined }>;
 } {
   const calls: Array<{ url: string; init: RequestInit | undefined }> = [];
-  const fetchImpl = vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+  const fetchImpl = vi.fn((input: string | URL | Request, init?: RequestInit) => {
     calls.push({ url: String(input), init });
     return Promise.resolve(response);
   }) as unknown as FetchImpl;

@@ -172,11 +172,12 @@ Append-only public ledger; each row carries CLV, Brier, devnet tx sig, and proof
 > Timeline: today **Jun 28** → deadline **Jul 19**. ~3 weeks. Record live data early (free tier ends Jul 19).
 
 ### Phase 0 — Foundations & data capture (Days 1–2)
-- [ ] Monorepo scaffold (pnpm workspaces, tsconfig, eslint, vitest).
-- [ ] `ingest`: guest-JWT auth + on-chain `subscribe` + token activation (devnet wallet).
-- [ ] `scripts/record-live.ts`: subscribe to SSE odds+scores, write raw to `data/` (build the **replay corpus** for several real WC matches while data is live & free).
-- [ ] `core`: normalized event types (`OddsTick`, `ScoreEvent`, `Decision`).
-- **Exit:** recorded ≥3 full matches; can re-read them.
+- [x] Monorepo scaffold (pnpm workspaces, tsconfig, eslint, vitest) — typecheck + 34 tests green.
+- [x] `ingest`: guest-JWT auth + token activation (devnet wallet, ed25519 activation signing real). On-chain `subscribe` is a **marked Phase-3 stub** (needs the undocumented Token-2022 program id/IDL; it throws rather than fabricate a tx sig).
+- [x] `scripts/record-live.ts`: subscribe to SSE odds+scores, append raw to `data/<fixtureId>-<UTCdate>.jsonl` (the **replay corpus**); guest-auth, backoff reconnect, `--minutes` auto-stop + SIGINT flush.
+- [x] `scripts/replay-check.ts`: re-decode + re-normalize the corpus, demargin sanity (`Pct`≈100); the "can re-read them" gate.
+- [x] `core`: normalized event types (`OddsTick`, `ScoreEvent`, `Decision`) + `RecordEnvelope` corpus format.
+- **Exit:** tooling ready & verified end-to-end on a synthetic corpus. **Action remaining (human, time-boxed):** run `pnpm record --fixture <id>` against ≥3 live WC fixtures during the free window (ends Jul 19), then `pnpm replay:check`.
 
 ### Phase 1 — Ingest + replay (Days 3–6)
 - [ ] Snapshot + historical-interval fetchers; SSE subscriber with reconnect/backfill.

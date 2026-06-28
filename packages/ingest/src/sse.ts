@@ -76,7 +76,9 @@ function subscribe(
    */
   const fetchImpl = client.fetchImpl;
   const fetchWithAuth: FetchLike = (input, init) => {
-    const headers = new Headers(init.headers as HeadersInit | undefined);
+    const headers = new Headers(
+      init.headers as ConstructorParameters<typeof Headers>[0],
+    );
     if (client.jwt !== undefined) {
       headers.set('Authorization', `Bearer ${client.jwt}`);
     }

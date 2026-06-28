@@ -67,7 +67,7 @@ export interface ValidateStatParams {
  * The intended call shape (from the domain reference):
  * ```ts
  * program.methods
- *   .validateStat(/* leaf / proof args */)
+ *   .validateStat(...leafAndProofArgs)
  *   .accounts({ dailyScoresMerkleRoots: pda })
  *   .preInstructions([
  *     ComputeBudgetProgram.setComputeUnitLimit({ units: 1_400_000 }),
