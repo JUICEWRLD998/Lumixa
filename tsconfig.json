@@ -3,6 +3,8 @@
   "references": [
     { "path": "packages/core" },
     { "path": "packages/ingest" },
-    { "path": "packages/chain" }
+    { "path": "packages/chain" },
+    { "path": "packages/engine" },
+    { "path": "packages/replay" }
   ]
 }
