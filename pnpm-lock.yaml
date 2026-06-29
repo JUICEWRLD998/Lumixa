@@ -14,9 +14,18 @@ importers:
       '@lumixa/core':
         specifier: workspace:*
         version: link:packages/core
+      '@lumixa/engine':
+        specifier: workspace:*
+        version: link:packages/engine
       '@lumixa/ingest':
         specifier: workspace:*
         version: link:packages/ingest
+      '@lumixa/replay':
+        specifier: workspace:*
+        version: link:packages/replay
+      '@lumixa/trader':
+        specifier: workspace:*
+        version: link:packages/trader
     devDependencies:
       '@eslint/js':
         specifier: ^9.17.0
