@@ -1,4 +1,4 @@
-import { anchorMemo, fetchMemo, verifyMerkleProof, type MerkleNode } from '@lumixa/chain';
+import { anchorMemo, fetchMemo, sha256Hex, verifyMerkleProof, type MerkleNode } from '@lumixa/chain';
 import type { Connection, Keypair } from '@solana/web3.js';
 import type { Decision } from '@lumixa/core';
 import { hashDecision } from './hash.js';
@@ -7,6 +7,16 @@ import type { Narrator } from './narrate.js';
 
 /** Sentinel prefix for an offline (un-anchored) decision: `offline:<hash>`. */
 export const OFFLINE_TXSIG_PREFIX = 'offline:';
+
+/**
+ * The odds-tick leaf identity a decision commits to: `sha256(messageId)`. A
+ * fetched Merkle proof is only meaningful if it proves *this* leaf — otherwise a
+ * self-consistent proof for some other tick would spuriously verify. The verifier
+ * binds the proof to the decision through this function.
+ */
+export function oddsTickLeaf(messageId: string): string {
+  return sha256Hex(messageId);
+}
 
 /**
  * A normalized odds Merkle proof — what the verifier needs, extracted from the
@@ -170,11 +180,16 @@ export class Prover {
 
     const hash = hashDecision(row);
 
-    // Odds-tick Merkle proof — verified client-side against its published root.
+    // Odds-tick Merkle proof — verified client-side against its published root,
+    // AND bound to this decision: the proof must prove the leaf the decision
+    // commits to (`sha256(messageId)`), not just be internally self-consistent.
     let merkleVerified = false;
     if (this.proofFetcher) {
       const proof = await this.proofFetcher(row.messageId);
-      if (proof) merkleVerified = verifyMerkleProof(proof.leaf, proof.nodes, proof.root);
+      const expectedLeaf = oddsTickLeaf(row.messageId);
+      if (proof && proof.leaf.toLowerCase() === expectedLeaf.toLowerCase()) {
+        merkleVerified = verifyMerkleProof(proof.leaf, proof.nodes, proof.root);
+      }
     }
 
     // Anchor confirmation: read the memo back on-chain (live) or match the

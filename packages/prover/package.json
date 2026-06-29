@@ -13,12 +13,10 @@
     "@lumixa/engine": "workspace:*",
     "@lumixa/ingest": "workspace:*",
     "@solana/web3.js": "^1.98.0",
-    "better-sqlite3": "^11.8.0",
     "openai": "^4.77.0",
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.12",
     "typescript": "^5.7.2"
   }
 }

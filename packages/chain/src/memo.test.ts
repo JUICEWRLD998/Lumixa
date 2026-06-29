@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { Keypair, PublicKey } from '@solana/web3.js';
+import { Keypair } from '@solana/web3.js';
+import type { PublicKey } from '@solana/web3.js';
 import { MEMO_PROGRAM_ID, buildMemoInstruction } from './memo.js';
 
 describe('MEMO_PROGRAM_ID', () => {

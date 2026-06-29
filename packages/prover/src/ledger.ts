@@ -1,5 +1,15 @@
-import Database from 'better-sqlite3';
+import { createRequire } from 'node:module';
+import type * as NodeSqlite from 'node:sqlite';
 import type { Decision } from '@lumixa/core';
+
+type DatabaseSyncType = NodeSqlite.DatabaseSync;
+type SQLInputValue = NodeSqlite.SQLInputValue;
+
+// `node:sqlite` is a recent Node builtin that bundlers (Vite/vitest) don't yet
+// auto-externalize — a static `import` gets rewritten to a bare `sqlite` specifier
+// and fails to resolve. Loading it through `createRequire` keeps it a genuine
+// runtime builtin lookup; the type-only namespace import above is erased at compile time.
+const { DatabaseSync } = createRequire(import.meta.url)('node:sqlite') as typeof NodeSqlite;
 
 /**
  * Status of the on-chain SCORE/result validation for a decision. The odds-tick
@@ -103,16 +113,18 @@ const COLUMNS = [
 ] as const;
 
 /**
- * SQLite-backed ledger (`better-sqlite3`). Synchronous — fits the deterministic,
- * timer-free style of the rest of the agent — and an embedded file, so judges
- * need no DB to provision. Pass `':memory:'` for an ephemeral instance.
+ * SQLite-backed ledger on the Node 22+ built-in `node:sqlite` (`DatabaseSync`).
+ * Synchronous — fits the deterministic, timer-free style of the rest of the
+ * agent — and an embedded file, so judges need no DB to provision and no native
+ * toolchain to compile a driver. Pass `':memory:'` for an ephemeral instance.
  */
 export class SqliteLedger implements LedgerRepository {
-  private readonly db: Database.Database;
+  private readonly db: DatabaseSyncType;
 
   constructor(path = ':memory:') {
-    this.db = new Database(path);
-    this.db.pragma('journal_mode = WAL');
+    this.db = new DatabaseSync(path);
+    // WAL gives crash-safe append semantics for the on-disk ledger; harmless for ':memory:'.
+    if (path !== ':memory:') this.db.exec('PRAGMA journal_mode = WAL;');
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS decisions (
         id TEXT PRIMARY KEY,
@@ -158,6 +170,16 @@ export class SqliteLedger implements LedgerRepository {
     stmt.run(this.toParams(row));
   }
 
+  /** Map a row to `@`-prefixed bound params, coercing `undefined` → `null`. */
+  private toParams(row: LedgerRow): Record<string, SQLInputValue> {
+    const params: Record<string, SQLInputValue> = {};
+    for (const col of COLUMNS) {
+      const value = (row as unknown as Record<string, unknown>)[col];
+      params[`@${col}`] = (value === undefined ? null : value) as SQLInputValue;
+    }
+    return params;
+  }
+
   get(id: string): LedgerRow | undefined {
     const raw = this.db.prepare(`SELECT * FROM decisions WHERE id = ?`).get(id);
     return raw ? this.fromRow(raw as Record<string, unknown>) : undefined;
@@ -188,16 +210,6 @@ export class SqliteLedger implements LedgerRepository {
            clv = COALESCE(?, clv), brier = COALESCE(?, brier) WHERE id = ?`,
       )
       .run(fields.verifiedAt, fields.scoreValidation, fields.clv ?? null, fields.brier ?? null, id);
-  }
-
-  /** Map a row to bound params, coercing `undefined` → `null` for SQLite. */
-  private toParams(row: LedgerRow): Record<string, unknown> {
-    const params: Record<string, unknown> = {};
-    for (const col of COLUMNS) {
-      const value = (row as Record<string, unknown>)[col];
-      params[col] = value === undefined ? null : value;
-    }
-    return params;
   }
 
   /** Rebuild a {@link LedgerRow} from a DB row, dropping `null`s back to absent. */

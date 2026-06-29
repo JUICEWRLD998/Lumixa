@@ -13,7 +13,10 @@ describe('verifyMerkleProof', () => {
   //      h01    h23
   //     /  \    /  \
   //    L0  L1  L2  L3
-  const [l0, l1, l2, l3] = ['leaf-0', 'leaf-1', 'leaf-2', 'leaf-3'].map((s) => sha256Hex(s));
+  const l0 = sha256Hex('leaf-0');
+  const l1 = sha256Hex('leaf-1');
+  const l2 = sha256Hex('leaf-2');
+  const l3 = sha256Hex('leaf-3');
   const h01 = parent(l0, l1);
   const h23 = parent(l2, l3);
   const root = parent(h01, h23);

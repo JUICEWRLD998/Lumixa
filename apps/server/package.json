@@ -1,0 +1,35 @@
+{
+  "name": "@lumixa/server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./agent": "./src/agent.ts",
+    "./server": "./src/server.ts"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "build": "tsc -b",
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "@lumixa/chain": "workspace:*",
+    "@lumixa/core": "workspace:*",
+    "@lumixa/engine": "workspace:*",
+    "@lumixa/ingest": "workspace:*",
+    "@lumixa/prover": "workspace:*",
+    "@lumixa/replay": "workspace:*",
+    "@lumixa/trader": "workspace:*",
+    "dotenv": "^16.4.7",
+    "fastify": "^5.2.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

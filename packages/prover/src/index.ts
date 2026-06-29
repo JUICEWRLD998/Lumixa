@@ -23,6 +23,7 @@ export {
 export {
   Prover,
   parseOddsMerkleProof,
+  oddsTickLeaf,
   OFFLINE_TXSIG_PREFIX,
   type ProverOptions,
   type ProofFetcher,

@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "outDir": "dist", "rootDir": "src" },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../../packages/core" },
+    { "path": "../../packages/chain" },
+    { "path": "../../packages/engine" },
+    { "path": "../../packages/ingest" },
+    { "path": "../../packages/prover" },
+    { "path": "../../packages/replay" },
+    { "path": "../../packages/trader" }
+  ]
+}

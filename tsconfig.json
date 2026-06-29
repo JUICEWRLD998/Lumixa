@@ -6,6 +6,8 @@
     { "path": "packages/chain" },
     { "path": "packages/engine" },
     { "path": "packages/replay" },
-    { "path": "packages/trader" }
+    { "path": "packages/trader" },
+    { "path": "packages/prover" },
+    { "path": "apps/server" }
   ]
 }
