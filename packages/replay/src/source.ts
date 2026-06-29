@@ -90,8 +90,20 @@ export function createReplaySource(
     pendingTimer = setTimeout(() => {
       pendingTimer = undefined;
       if (state !== 'running') return;
-      cursor += 1;
-      emitEvent(ev);
+      // Drain EVERY event whose scheduled real-time has arrived, not just one.
+      // Events sharing a timestamp (and the terminal `end`, which the clock
+      // stamps at the last event's `ts`) are due simultaneously and must emit
+      // in the same tick — otherwise `end`/`onClose` would slip to a later
+      // macrotask and a bounded clock advance could miss it entirely.
+      while (cursor < events.length) {
+        const due = events[cursor];
+        if (due === undefined) break;
+        const dueReal = baseReal + (due.ts - baseVirtual) / replaySpeed;
+        if (dueReal - Date.now() > 0) break;
+        cursor += 1;
+        emitEvent(due);
+        if (state !== 'running') return; // a handler called stop() mid-drain
+      }
       scheduleNext(baseReal, baseVirtual);
     }, delay);
   };
