@@ -77,6 +77,9 @@ importers:
       '@lumixa/core':
         specifier: workspace:*
         version: link:../core
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
     devDependencies:
       typescript:
         specifier: ^5.7.2
@@ -109,6 +112,19 @@ importers:
       '@lumixa/core':
         specifier: workspace:*
         version: link:../core
+    devDependencies:
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
+  packages/trader:
+    dependencies:
+      '@lumixa/core':
+        specifier: workspace:*
+        version: link:../core
+      '@lumixa/engine':
+        specifier: workspace:*
+        version: link:../engine
     devDependencies:
       typescript:
         specifier: ^5.7.2

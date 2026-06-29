@@ -40,7 +40,11 @@ export interface Decision {
   // ── grading (Prove) ────────────────────────────────────────────
   /** demargined fair probability at close, percent */
   closingPct?: number;
-  /** Closing Line Value: entry fair prob − closing fair prob (fraction) */
+  /**
+   * Closing Line Value (fraction): `(closingPct − entryPct) / 100` for the
+   * backed side. Positive ⇒ the line moved our way → a better-than-closing
+   * price. See `@lumixa/engine`'s `clv()` for the canonical computation.
+   */
   clv?: number;
   /** Brier score component for this decision */
   brier?: number;
