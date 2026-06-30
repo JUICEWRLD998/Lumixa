@@ -1,0 +1,112 @@
+/* App shell + responsive dashboard grid. */
+
+.app {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(80% 50% at 50% -10%, rgba(45, 212, 191, 0.06), transparent 70%),
+    var(--bg-base);
+  overflow: hidden;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-5);
+  border-bottom: 1px solid var(--border-subtle);
+  flex: 0 0 auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.brand__mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: radial-gradient(circle at 35% 30%, var(--chain-bright), var(--chain) 55%, #0b6b62);
+  box-shadow: 0 0 18px var(--chain-glow);
+}
+.brand__name {
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.01em;
+}
+.brand__tag {
+  font-size: var(--fs-micro);
+  color: var(--text-dim);
+  margin-top: -2px;
+}
+
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.dashboard {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr) 372px;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    'kpis   kpis   kpis'
+    'ledger hero   verify';
+  gap: var(--s-4);
+  padding: var(--s-4);
+}
+
+.kpi-strip {
+  grid-area: kpis;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-4);
+}
+.area-ledger {
+  grid-area: ledger;
+  min-height: 0;
+}
+.area-hero {
+  grid-area: hero;
+  min-height: 0;
+}
+.area-verify {
+  grid-area: verify;
+  min-height: 0;
+}
+
+@media (max-width: 1279px) {
+  .app {
+    height: auto;
+    overflow: visible;
+  }
+  .dashboard {
+    grid-template-columns: 300px minmax(0, 1fr);
+    grid-template-areas:
+      'kpis   kpis'
+      'ledger hero'
+      'ledger verify';
+    grid-template-rows: auto 420px auto;
+  }
+}
+
+@media (max-width: 859px) {
+  .kpi-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .dashboard {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'kpis'
+      'hero'
+      'ledger'
+      'verify';
+    grid-template-rows: none;
+  }
+}
